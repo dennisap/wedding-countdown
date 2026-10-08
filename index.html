@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hitung Mundur Pernikahan</title>
+  <title>Dennis &amp; Zahra — Hitung Mundur</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Great+Vibes&family=Inter:wght@400;500&display=swap" rel="stylesheet">
   <style>
@@ -154,63 +154,6 @@
 
     button:hover { border-color: var(--gold); }
 
-    button.primary {
-      color: #fff;
-      background: var(--gold);
-      border-color: var(--gold);
-    }
-
-    button.primary:hover { background: #9a7740; }
-
-    dialog {
-      width: min(420px, calc(100vw - 32px));
-      margin: auto;
-      padding: 24px;
-      color: var(--text);
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 16px;
-    }
-
-    dialog::backdrop { background: rgba(61, 47, 42, 0.45); }
-
-    dialog h2 {
-      margin-bottom: 16px;
-      font-family: "Cormorant Garamond", Georgia, serif;
-      font-size: 26px;
-      font-weight: 600;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 14px;
-      font-size: 13px;
-      color: var(--muted);
-      text-align: left;
-    }
-
-    input {
-      display: block;
-      width: 100%;
-      margin-top: 6px;
-      padding: 10px 12px;
-      font: inherit;
-      font-size: 15px;
-      color: var(--text);
-      background: var(--bg);
-      border: 1px solid var(--line);
-      border-radius: 8px;
-    }
-
-    input:focus { outline: 2px solid var(--gold); outline-offset: 1px; }
-
-    .form-actions {
-      margin-top: 8px;
-      display: flex;
-      gap: 10px;
-      justify-content: flex-end;
-    }
-
     .music-toggle {
       position: fixed;
       top: 16px;
@@ -247,13 +190,13 @@
   <main>
     <p class="eyebrow">The Wedding of</p>
     <h1 class="names">
-      <span id="nameA">Mempelai Pria</span><span class="amp">&amp;</span><span id="nameB">Mempelai Wanita</span>
+      Dennis Andika Putra<span class="amp">&amp;</span>Zahra Nur Alyssa
     </h1>
     <div class="divider"></div>
-    <p class="when" id="when">Tanggal belum diatur</p>
-    <p class="where" id="where"></p>
+    <p class="when" id="when">Sabtu, 7 Agustus 2027 · 08.00 WIB</p>
+    <p class="where">Jakarta</p>
 
-    <p class="status" id="status">Atur tanggal pernikahan untuk memulai</p>
+    <p class="status" id="status">Menuju hari bahagia</p>
     <div class="countdown">
       <div class="unit"><div class="num" id="days">--</div><div class="label">Hari</div></div>
       <div class="unit"><div class="num" id="hours">--</div><div class="label">Jam</div></div>
@@ -262,32 +205,9 @@
     </div>
 
     <div class="actions">
-      <button id="openSettings">Atur Acara</button>
       <button id="share">Salin Tautan</button>
     </div>
   </main>
-
-  <dialog id="settings">
-    <form id="form" method="dialog">
-      <h2>Atur Acara</h2>
-      <label>Nama mempelai pria
-        <input name="a" maxlength="40" required>
-      </label>
-      <label>Nama mempelai wanita
-        <input name="b" maxlength="40" required>
-      </label>
-      <label>Tanggal &amp; waktu acara
-        <input name="date" type="datetime-local" required>
-      </label>
-      <label>Lokasi (opsional)
-        <input name="place" maxlength="80">
-      </label>
-      <div class="form-actions">
-        <button type="button" id="cancel">Batal</button>
-        <button type="submit" class="primary">Simpan</button>
-      </div>
-    </form>
-  </dialog>
 
   <audio id="bgm" src="pilihanku.mp3" loop preload="auto"></audio>
   <button id="musicToggle" class="music-toggle" type="button" aria-label="Putar musik" title="Pilihanku — Maliq & D'Essentials">
@@ -299,62 +219,17 @@
   </button>
 
   <script>
-    const STORAGE_KEY = "wedding-countdown";
+    const TARGET = new Date(2027, 7, 7, 8, 0, 0);
     const $ = (id) => document.getElementById(id);
-    const dialog = $("settings");
-    const form = $("form");
 
-    // Data dari tautan (?a=&b=&d=&p=) lebih diutamakan daripada yang tersimpan
-    function loadEvent() {
-      const params = new URLSearchParams(location.search);
-      if (params.get("d")) {
-        return {
-          a: params.get("a") || "",
-          b: params.get("b") || "",
-          date: params.get("d"),
-          place: params.get("p") || "",
-        };
-      }
-      try {
-        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || null;
-      } catch {
-        return null;
-      }
-    }
-
-    function saveEvent(event) {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(event));
-      } catch {}
-    }
-
-    let event = loadEvent();
-    let target = null;
-
-    function renderEvent() {
-      if (!event) return;
-      target = new Date(event.date);
-      if (isNaN(target)) {
-        target = null;
-        return;
-      }
-      $("nameA").textContent = event.a || "Mempelai Pria";
-      $("nameB").textContent = event.b || "Mempelai Wanita";
-      const tanggal = target.toLocaleDateString("id-ID", {
-        weekday: "long", day: "numeric", month: "long", year: "numeric",
-      });
-      const jam = target.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
-      $("when").textContent = `${tanggal} · ${jam}`;
-      $("where").textContent = event.place || "";
-      document.title = `${event.a} & ${event.b} — Hitung Mundur`;
-      tick();
-    }
+    $("when").textContent = `${TARGET.toLocaleDateString("id-ID", {
+      weekday: "long", day: "numeric", month: "long", year: "numeric",
+    })} · ${TARGET.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })} WIB`;
 
     const pad = (n) => String(n).padStart(2, "0");
 
     function tick() {
-      if (!target) return;
-      const diff = target - Date.now();
+      const diff = TARGET - Date.now();
       const passed = diff <= 0;
       const total = Math.floor(Math.abs(diff) / 1000);
 
@@ -367,38 +242,10 @@
         : "Menuju hari bahagia";
     }
 
-    function openSettings() {
-      form.a.value = event?.a || "";
-      form.b.value = event?.b || "";
-      form.date.value = event?.date || "";
-      form.place.value = event?.place || "";
-      dialog.showModal();
-    }
-
-    form.addEventListener("submit", () => {
-      event = {
-        a: form.a.value.trim(),
-        b: form.b.value.trim(),
-        date: form.date.value,
-        place: form.place.value.trim(),
-      };
-      saveEvent(event);
-      // Buang parameter tautan lama supaya tidak menimpa data yang baru disimpan
-      history.replaceState(null, "", location.pathname);
-      renderEvent();
-    });
-
-    $("openSettings").addEventListener("click", openSettings);
-    $("cancel").addEventListener("click", () => dialog.close());
-
     $("share").addEventListener("click", async () => {
-      if (!event) return openSettings();
-      const params = new URLSearchParams({ a: event.a, b: event.b, d: event.date });
-      if (event.place) params.set("p", event.place);
-      const url = `${location.href.split(/[?#]/)[0]}?${params}`;
       const button = $("share");
       try {
-        await navigator.clipboard.writeText(url);
+        await navigator.clipboard.writeText(location.href.split(/[?#]/)[0]);
         button.textContent = "Tautan tersalin ✓";
       } catch {
         button.textContent = "Gagal menyalin";
@@ -437,9 +284,8 @@
       document.removeEventListener("click", startMusic);
     });
 
-    renderEvent();
+    tick();
     setInterval(tick, 1000);
-    if (!target) openSettings();
   </script>
 </body>
 </html>
