@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dennis &amp; Zahra — Hitung Mundur</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Great+Vibes&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Great+Vibes&family=Inter:wght@400;500&family=Noto+Sans+Javanese&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #faf5ef;
@@ -30,7 +30,9 @@
       background:
         radial-gradient(circle at 15% 10%, var(--bg-accent) 0, transparent 45%),
         radial-gradient(circle at 85% 90%, var(--bg-accent) 0, transparent 45%),
+        radial-gradient(rgba(176, 138, 79, 0.10) 1.4px, transparent 1.5px),
         var(--bg);
+      background-size: auto, auto, 26px 26px, auto;
     }
 
     main {
@@ -194,6 +196,81 @@
       to { transform: scale(1.45); opacity: 0; }
     }
 
+    .aksara {
+      margin-bottom: 14px;
+      font-family: "Noto Sans Javanese", serif;
+      font-size: 17px;
+      line-height: 1.9;
+      color: var(--gold);
+    }
+
+    .ornament {
+      display: block;
+      margin: 16px auto -10px;
+      color: var(--gold);
+    }
+
+    .tumpal {
+      position: fixed;
+      left: 0;
+      right: 0;
+      height: 14px;
+      z-index: 9;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='14'%3E%3Cpath d='M0 0h24L12 14z' fill='%23b08a4f'/%3E%3C/svg%3E");
+      background-repeat: repeat-x;
+      background-size: 24px 14px;
+    }
+
+    .tumpal-top { top: 0; border-bottom: 1px solid rgba(176, 138, 79, 0.35); }
+    .tumpal-bottom { bottom: 0; transform: rotate(180deg); border-bottom: 1px solid rgba(176, 138, 79, 0.35); }
+
+    .now-playing {
+      margin-top: 18px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 16px;
+      font-size: 12.5px;
+      color: var(--muted);
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      box-shadow: 0 4px 14px rgba(120, 90, 60, 0.08);
+    }
+
+    .now-playing[hidden] { display: none; }
+
+    .eq {
+      display: inline-flex;
+      align-items: flex-end;
+      gap: 2.5px;
+      height: 14px;
+    }
+
+    .eq span {
+      width: 3px;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--gold);
+      animation: eq 0.9s ease-in-out infinite;
+    }
+
+    .eq span:nth-child(2) { animation-delay: 0.22s; }
+    .eq span:nth-child(3) { animation-delay: 0.45s; }
+    .eq span:nth-child(4) { animation-delay: 0.68s; }
+
+    .now-playing.muted .eq span {
+      height: 3px;
+      opacity: 0.5;
+      animation-play-state: paused;
+    }
+
+    @keyframes eq {
+      0%, 100% { height: 4px; }
+      50% { height: 13px; }
+    }
+
     @media (max-width: 420px) {
       .countdown { gap: 8px; }
       .unit { padding: 16px 2px 12px; border-radius: 10px; }
@@ -202,7 +279,10 @@
   </style>
 </head>
 <body>
+  <div class="tumpal tumpal-top"></div>
+  <div class="tumpal tumpal-bottom"></div>
   <main>
+    <p class="aksara">ꦱꦸꦒꦼꦔ꧀ꦫꦮꦸꦃ</p>
     <p class="eyebrow">The Wedding of</p>
     <h1 class="names">
       Dennis Andika Putra<span class="amp">&amp;</span>Zahra Nur Alyssa
@@ -210,6 +290,18 @@
     <div class="divider"></div>
     <p class="when" id="when">Sabtu, 7 Agustus 2027 · 08.00 WIB</p>
     <p class="where">Jakarta</p>
+
+    <svg class="ornament" viewBox="0 0 220 26" width="180" height="22" aria-hidden="true">
+      <g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+        <path d="M8 13 C 28 2, 52 2, 72 13"/>
+        <path d="M22 13 C 34 7.5, 46 7.5, 58 13"/>
+        <path d="M212 13 C 192 2, 168 2, 148 13"/>
+        <path d="M198 13 C 186 7.5, 174 7.5, 162 13"/>
+      </g>
+      <path d="M110 4.5 l7.5 8.5 -7.5 8.5 -7.5 -8.5 z" fill="currentColor"/>
+      <circle cx="103" cy="13" r="1.6" fill="currentColor"/>
+      <circle cx="117" cy="13" r="1.6" fill="currentColor"/>
+    </svg>
 
     <p class="status" id="status">Menuju hari bahagia</p>
     <div class="countdown">
@@ -221,6 +313,11 @@
 
     <div class="actions">
       <button id="share">Salin Tautan</button>
+    </div>
+
+    <div class="now-playing" id="nowPlaying" hidden>
+      <span class="eq" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+      <span id="npText"></span>
     </div>
   </main>
 
@@ -271,9 +368,19 @@
     const bgm = $("bgm");
     const musicToggle = $("musicToggle");
 
+    const np = $("nowPlaying");
+    const npText = $("npText");
+
     function setMusicUI(playing) {
       musicToggle.classList.toggle("playing", playing);
       musicToggle.setAttribute("aria-label", playing ? "Jeda musik" : "Putar musik");
+      np.hidden = !playing;
+      np.classList.toggle("muted", playing && bgm.muted);
+      npText.textContent = playing
+        ? bgm.muted
+          ? "Musik senyap — ketuk di mana saja untuk menyalakan suara"
+          : "Sedang diputar: Pilihanku — Maliq & D'Essentials"
+        : "";
     }
 
     async function tryPlayMusic() {
