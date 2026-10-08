@@ -189,6 +189,37 @@
       pointer-events: none;
     }
 
+    .music-hint {
+      position: fixed;
+      top: 68px;
+      right: 16px;
+      z-index: 10;
+      max-width: 190px;
+      padding: 8px 12px;
+      font-size: 11.5px;
+      line-height: 1.45;
+      color: var(--muted);
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      box-shadow: 0 6px 20px rgba(120, 90, 60, 0.12);
+    }
+
+    .music-hint::before {
+      content: "";
+      position: absolute;
+      top: -5px;
+      right: 16px;
+      width: 8px;
+      height: 8px;
+      background: var(--card);
+      border-left: 1px solid var(--line);
+      border-top: 1px solid var(--line);
+      transform: rotate(45deg);
+    }
+
+    .music-hint[hidden] { display: none; }
+
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
@@ -336,6 +367,7 @@
   </main>
 
   <audio id="bgm" src="pilihanku.mp3" loop preload="auto"></audio>
+  <p class="music-hint" id="musicHint">Klik logo musik untuk memulai lagu</p>
   <button id="musicToggle" class="music-toggle" type="button" aria-label="Putar musik" title="Pilihanku — Maliq & D'Essentials">
     <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <path d="M9 18V5l12-2v13"/>
@@ -384,6 +416,7 @@
 
     const np = $("nowPlaying");
     const npText = $("npText");
+    const musicHint = $("musicHint");
 
     function setMusicUI(playing) {
       musicToggle.classList.toggle("playing", playing);
@@ -392,7 +425,7 @@
       np.classList.toggle("muted", playing && bgm.muted);
       npText.textContent = playing
         ? bgm.muted
-          ? "Ketuk logo musik untuk memulai lagu"
+          ? "Musik diputar senyap"
           : "Sedang diputar: Pilihanku — Maliq & D'Essentials"
         : "";
     }
@@ -407,6 +440,7 @@
     }
 
     musicToggle.addEventListener("click", () => {
+      musicHint.hidden = true;
       if (bgm.muted) {
         unmute();
       } else if (bgm.paused) {
