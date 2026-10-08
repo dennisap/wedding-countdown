@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dennis &amp; Zahra</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Great+Vibes&family=Inter:wght@400;500&family=Noto+Sans+Javanese&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Inter:wght@400;500&family=Noto+Sans+Javanese&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #faf5ef;
@@ -39,7 +39,6 @@
       width: 100%;
       max-width: 720px;
       text-align: center;
-      container-type: inline-size;
     }
 
     .eyebrow {
@@ -51,20 +50,21 @@
 
     .names {
       margin: 18px 0 10px;
-      font-family: "Great Vibes", "Cormorant Garamond", Georgia, serif;
-      font-size: clamp(21px, 6.4vw, 46px);
-      font-size: 6.4cqw;
-      font-weight: 400;
-      line-height: 1.15;
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: clamp(28px, 8vw, 52px);
+      font-weight: 500;
+      line-height: 1.25;
+      letter-spacing: 0.02em;
       color: var(--gold);
-      white-space: nowrap;
     }
 
+    .names > span { display: block; }
+
     .names .amp {
-      font-family: "Cormorant Garamond", Georgia, serif;
-      font-size: 0.5em;
+      margin: 6px 0;
+      font-size: 0.45em;
+      line-height: 1;
       color: var(--muted);
-      padding: 0 0.25em;
     }
 
     .divider {
@@ -297,7 +297,9 @@
     <p class="eyebrow">The Wedding of</p>
     <img class="couple-photo" src="dz-ghibli.png" alt="Ilustrasi Dennis dan Zahra bergaya Ghibli 90-an">
     <h1 class="names" id="names">
-      Zahra Nur Alyssa<span class="amp">&amp;</span>Dennis Andika Putra
+      <span>Zahra Nur Alyssa</span>
+      <span class="amp">&amp;</span>
+      <span>Dennis Andika Putra</span>
     </h1>
     <div class="divider"></div>
     <p class="when" id="when">Sabtu, 7 Agustus 2027 · 08.00 WIB</p>
@@ -351,19 +353,6 @@
     })} · ${TARGET.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })} WIB`;
 
     const pad = (n) => String(n).padStart(2, "0");
-
-    const namesEl = $("names");
-    function fitNames() {
-      namesEl.style.fontSize = "";
-      let size = parseFloat(getComputedStyle(namesEl).fontSize);
-      while (namesEl.scrollWidth > namesEl.clientWidth && size > 12) {
-        size--;
-        namesEl.style.fontSize = size + "px";
-      }
-    }
-    fitNames();
-    document.fonts.ready.then(fitNames);
-    addEventListener("resize", fitNames);
 
     function tick() {
       const diff = TARGET - Date.now();
