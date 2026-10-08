@@ -378,7 +378,7 @@
       np.classList.toggle("muted", playing && bgm.muted);
       npText.textContent = playing
         ? bgm.muted
-          ? "Musik senyap — ketuk di mana saja untuk menyalakan suara"
+          ? "Ketuk logo musik untuk memulai lagu"
           : "Sedang diputar: Pilihanku — Maliq & D'Essentials"
         : "";
     }
@@ -410,17 +410,13 @@
       tryPlayMusic();
     }
 
-    // Autoplay bersuara diblokir browser: coba dulu, kalau gagal mainkan senyap lalu nyalakan suara saat ketukan pertama
+    // Autoplay bersuara diblokir browser: coba dulu, kalau gagal mainkan senyap dan tunggu pengunjung mengetuk logo musik
     (async () => {
       if (await tryPlayMusic()) return;
       bgm.muted = true;
       if (await tryPlayMusic()) {
         musicToggle.classList.add("needs-unmute");
         musicToggle.setAttribute("title", "Ketuk untuk mengaktifkan musik");
-        document.addEventListener("click", function unmuteOnFirstTap() {
-          if (bgm.muted) unmute();
-          document.removeEventListener("click", unmuteOnFirstTap);
-        });
       }
     })();
 
