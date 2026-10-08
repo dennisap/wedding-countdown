@@ -175,8 +175,23 @@
     .music-toggle:not(.playing) svg { opacity: 0.4; }
     .music-toggle.playing svg { animation: spin 5s linear infinite; }
 
+    .music-toggle.needs-unmute::after {
+      content: "";
+      position: absolute;
+      inset: -5px;
+      border: 2px solid var(--gold);
+      border-radius: 50%;
+      animation: pulse 1.4s ease-out infinite;
+      pointer-events: none;
+    }
+
     @keyframes spin {
       to { transform: rotate(360deg); }
+    }
+
+    @keyframes pulse {
+      from { transform: scale(0.85); opacity: 1; }
+      to { transform: scale(1.45); opacity: 0; }
     }
 
     @media (max-width: 420px) {
@@ -271,18 +286,36 @@
     }
 
     musicToggle.addEventListener("click", () => {
-      if (bgm.paused) tryPlayMusic();
-      else {
+      if (bgm.muted) {
+        unmute();
+      } else if (bgm.paused) {
+        tryPlayMusic();
+      } else {
         bgm.pause();
         setMusicUI(false);
       }
     });
 
-    tryPlayMusic();
-    document.addEventListener("click", function startMusic() {
-      if (bgm.paused) tryPlayMusic();
-      document.removeEventListener("click", startMusic);
-    });
+    function unmute() {
+      bgm.muted = false;
+      musicToggle.classList.remove("needs-unmute");
+      musicToggle.setAttribute("title", "Pilihanku — Maliq & D'Essentials");
+      tryPlayMusic();
+    }
+
+    // Autoplay bersuara diblokir browser: coba dulu, kalau gagal mainkan senyap lalu nyalakan suara saat ketukan pertama
+    (async () => {
+      if (await tryPlayMusic()) return;
+      bgm.muted = true;
+      if (await tryPlayMusic()) {
+        musicToggle.classList.add("needs-unmute");
+        musicToggle.setAttribute("title", "Ketuk untuk mengaktifkan musik");
+        document.addEventListener("click", function unmuteOnFirstTap() {
+          if (bgm.muted) unmute();
+          document.removeEventListener("click", unmuteOnFirstTap);
+        });
+      }
+    })();
 
     tick();
     setInterval(tick, 1000);
